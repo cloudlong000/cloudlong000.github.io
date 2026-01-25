@@ -1,0 +1,668 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>我的摄影作品集</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary-color: #667eea;
+            --secondary-color: #764ba2;
+            --text-light: rgba(255, 255, 255, 0.9);
+            --text-muted: rgba(255, 255, 255, 0.6);
+        }
+
+        body {
+            font-family: 'SF Pro Display', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            background: #000;
+            color: var(--text-light);
+            overflow-x: hidden;
+            line-height: 1.6;
+        }
+
+        /* 导航栏 */
+        header {
+            position: fixed;
+            top: 0;
+            width: 100%;
+            padding: 25px 60px;
+            background: rgba(0, 0, 0, 0.85);
+            backdrop-filter: blur(20px) saturate(180%);
+            z-index: 1000;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+            transition: all 0.3s ease;
+        }
+
+        header.scrolled {
+            padding: 15px 60px;
+            background: rgba(0, 0, 0, 0.95);
+        }
+
+        nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            max-width: 1600px;
+            margin: 0 auto;
+        }
+
+        .logo {
+            font-size: 20px;
+            font-weight: 700;
+            letter-spacing: 3px;
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 50px;
+            list-style: none;
+        }
+
+        .nav-links a {
+            color: var(--text-light);
+            text-decoration: none;
+            font-size: 13px;
+            letter-spacing: 1.5px;
+            font-weight: 500;
+            position: relative;
+            transition: color 0.3s;
+        }
+
+        .nav-links a::after {
+            content: '';
+            position: absolute;
+            bottom: -5px;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background: linear-gradient(90deg, var(--primary-color), var(--secondary-color));
+            transition: width 0.3s ease;
+        }
+
+        .nav-links a:hover {
+            color: #fff;
+        }
+
+        .nav-links a:hover::after {
+            width: 100%;
+        }
+
+        /* 英雄区域 */
+        .hero {
+            height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            background: #000;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .hero::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(102, 126, 234, 0.1) 0%, transparent 70%);
+            animation: rotate 20s linear infinite;
+        }
+
+        @keyframes rotate {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+
+        .hero-content {
+            z-index: 1;
+            animation: fadeInUp 1.2s ease-out;
+        }
+
+        .hero h1 {
+            font-size: 96px;
+            font-weight: 200;
+            letter-spacing: 8px;
+            margin-bottom: 30px;
+            background: linear-gradient(135deg, #fff 0%, rgba(255, 255, 255, 0.7) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .hero-subtitle {
+            font-size: 22px;
+            letter-spacing: 5px;
+            color: var(--text-muted);
+            margin-bottom: 50px;
+            font-weight: 300;
+        }
+
+        .cta-button {
+            display: inline-block;
+            padding: 16px 48px;
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            color: #fff;
+            text-decoration: none;
+            border-radius: 50px;
+            font-size: 14px;
+            letter-spacing: 2px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            box-shadow: 0 10px 30px rgba(102, 126, 234, 0.3);
+        }
+
+        .cta-button:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 15px 40px rgba(102, 126, 234, 0.4);
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(50px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* 画廊区域 */
+        .gallery {
+            padding: 150px 60px;
+            max-width: 1800px;
+            margin: 0 auto;
+            background: linear-gradient(180deg, #000 0%, #0a0a0a 100%);
+        }
+
+        .section-header {
+            text-align: center;
+            margin-bottom: 100px;
+        }
+
+        .section-tag {
+            font-size: 12px;
+            letter-spacing: 3px;
+            color: var(--primary-color);
+            font-weight: 600;
+            margin-bottom: 15px;
+            text-transform: uppercase;
+        }
+
+        .section-title {
+            font-size: 64px;
+            font-weight: 200;
+            letter-spacing: 2px;
+            margin-bottom: 25px;
+        }
+
+        .section-description {
+            font-size: 18px;
+            color: var(--text-muted);
+            max-width: 600px;
+            margin: 0 auto;
+            line-height: 1.8;
+        }
+
+        .gallery-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+            gap: 40px;
+        }
+
+        .gallery-item {
+            position: relative;
+            overflow: hidden;
+            aspect-ratio: 3/4;
+            background: #0f0f0f;
+            cursor: pointer;
+            border-radius: 12px;
+            transition: transform 0.5s cubic-bezier(0.165, 0.84, 0.44, 1);
+        }
+
+        .gallery-item::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(135deg, rgba(102, 126, 234, 0.4) 0%, rgba(118, 75, 162, 0.4) 100%);
+            opacity: 0;
+            transition: opacity 0.5s ease;
+            z-index: 1;
+        }
+
+        .gallery-item:hover {
+            transform: translateY(-10px);
+        }
+
+        .gallery-item:hover::before {
+            opacity: 1;
+        }
+
+        .gallery-item img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.7s cubic-bezier(0.165, 0.84, 0.44, 1);
+            filter: brightness(0.9);
+        }
+
+        .gallery-item:hover img {
+            transform: scale(1.15);
+            filter: brightness(1);
+        }
+
+        .gallery-overlay {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            padding: 40px;
+            background: linear-gradient(to top, rgba(0,0,0,0.95) 0%, transparent 100%);
+            transform: translateY(100%);
+            transition: transform 0.5s cubic-bezier(0.165, 0.84, 0.44, 1);
+            z-index: 2;
+        }
+
+        .gallery-item:hover .gallery-overlay {
+            transform: translateY(0);
+        }
+
+        .gallery-overlay h3 {
+            font-size: 24px;
+            font-weight: 500;
+            margin-bottom: 12px;
+            letter-spacing: 1px;
+        }
+
+        .gallery-overlay p {
+            font-size: 14px;
+            color: var(--text-muted);
+            letter-spacing: 2px;
+            text-transform: uppercase;
+        }
+
+        /* 关于我区域 */
+        .about {
+            padding: 150px 60px;
+            background: linear-gradient(135deg, #0a0a0a 0%, #1a1a2e 100%);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .about::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            right: 0;
+            width: 50%;
+            height: 100%;
+            background: radial-gradient(circle at center, rgba(102, 126, 234, 0.05) 0%, transparent 70%);
+        }
+
+        .about-content {
+            max-width: 900px;
+            margin: 0 auto;
+            position: relative;
+            z-index: 1;
+        }
+
+        .about-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 80px;
+            align-items: center;
+        }
+
+        .about-text h2 {
+            font-size: 56px;
+            font-weight: 200;
+            letter-spacing: 2px;
+            margin-bottom: 30px;
+        }
+
+        .about-text p {
+            font-size: 17px;
+            line-height: 2;
+            color: var(--text-muted);
+            margin-bottom: 25px;
+        }
+
+        .about-stats {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 30px;
+            margin-top: 50px;
+        }
+
+        .stat-item {
+            text-align: center;
+            padding: 30px;
+            background: rgba(255, 255, 255, 0.03);
+            border-radius: 12px;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            transition: all 0.3s ease;
+        }
+
+        .stat-item:hover {
+            background: rgba(255, 255, 255, 0.05);
+            transform: translateY(-5px);
+        }
+
+        .stat-number {
+            font-size: 48px;
+            font-weight: 200;
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 10px;
+        }
+
+        .stat-label {
+            font-size: 13px;
+            letter-spacing: 2px;
+            color: var(--text-muted);
+            text-transform: uppercase;
+        }
+
+        /* 页脚 */
+        footer {
+            padding: 80px 60px 40px;
+            text-align: center;
+            background: #000;
+            border-top: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .footer-content {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .social-links {
+            display: flex;
+            justify-content: center;
+            gap: 30px;
+            margin-bottom: 40px;
+        }
+
+        .social-links a {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.05);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--text-muted);
+            text-decoration: none;
+            font-size: 20px;
+            transition: all 0.3s ease;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .social-links a:hover {
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            color: #fff;
+            transform: translateY(-5px);
+        }
+
+        footer p {
+            color: var(--text-muted);
+            font-size: 13px;
+            letter-spacing: 2px;
+        }
+
+        /* 响应式设计 */
+        @media (max-width: 1024px) {
+            .gallery-grid {
+                grid-template-columns: repeat(2, 1fr);
+                gap: 30px;
+            }
+
+            .about-grid {
+                grid-template-columns: 1fr;
+                gap: 50px;
+            }
+        }
+
+        @media (max-width: 768px) {
+            header {
+                padding: 20px 30px;
+            }
+
+            .nav-links {
+                gap: 25px;
+            }
+
+            .nav-links a {
+                font-size: 12px;
+            }
+
+            .hero h1 {
+                font-size: 56px;
+                letter-spacing: 4px;
+            }
+
+            .hero-subtitle {
+                font-size: 16px;
+            }
+
+            .gallery {
+                padding: 100px 30px;
+            }
+
+            .gallery-grid {
+                grid-template-columns: 1fr;
+                gap: 25px;
+            }
+
+            .section-title {
+                font-size: 42px;
+            }
+
+            .about {
+                padding: 100px 30px;
+            }
+
+            .about-text h2 {
+                font-size: 38px;
+            }
+
+            .about-stats {
+                grid-template-columns: 1fr;
+            }
+
+            footer {
+                padding: 60px 30px 30px;
+            }
+        }
+
+        /* 滚动动画 */
+        .fade-in {
+            opacity: 0;
+            transform: translateY(30px);
+            transition: opacity 0.8s ease, transform 0.8s ease;
+        }
+
+        .fade-in.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    </style>
+</head>
+<body>
+    <header id="header">
+        <nav>
+            <div class="logo">PORTFOLIO</div>
+            <ul class="nav-links">
+                <li><a href="#home">首页</a></li>
+                <li><a href="#gallery">作品</a></li>
+                <li><a href="#about">关于</a></li>
+                <li><a href="#contact">联系</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <section id="home" class="hero">
+        <div class="hero-content">
+            <h1>摄影艺术</h1>
+            <p class="hero-subtitle">定格时光 · 记录永恒</p>
+            <a href="#gallery" class="cta-button">浏览作品</a>
+        </div>
+    </section>
+
+    <section id="gallery" class="gallery">
+        <div class="section-header fade-in">
+            <div class="section-tag">PORTFOLIO</div>
+            <h2 class="section-title">精选作品</h2>
+            <p class="section-description">每一张照片都是一个故事，记录着我对这个世界的独特视角和感悟</p>
+        </div>
+        <div class="gallery-grid">
+            <div class="gallery-item fade-in">
+                <img src="https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=800&q=80" alt="山景">
+                <div class="gallery-overlay">
+                    <h3>云海日出</h3>
+                    <p>风光摄影</p>
+                </div>
+            </div>
+            <div class="gallery-item fade-in">
+                <img src="https://images.unsplash.com/photo-1519681393784-d120267933ba?w=800&q=80" alt="星空">
+                <div class="gallery-overlay">
+                    <h3>璀璨星河</h3>
+                    <p>天文摄影</p>
+                </div>
+            </div>
+            <div class="gallery-item fade-in">
+                <img src="https://images.unsplash.com/photo-1501785888041-af3ef285b470?w=800&q=80" alt="湖景">
+                <div class="gallery-overlay">
+                    <h3>镜湖倒影</h3>
+                    <p>自然风光</p>
+                </div>
+            </div>
+            <div class="gallery-item fade-in">
+                <img src="https://images.unsplash.com/photo-1472214103451-9374bd1c798e?w=800&q=80" alt="森林">
+                <div class="gallery-overlay">
+                    <h3>晨雾迷境</h3>
+                    <p>森林摄影</p>
+                </div>
+            </div>
+            <div class="gallery-item fade-in">
+                <img src="https://images.unsplash.com/photo-1518837695005-2083093ee35b?w=800&q=80" alt="海岸">
+                <div class="gallery-overlay">
+                    <h3>蔚蓝海岸</h3>
+                    <p>海景摄影</p>
+                </div>
+            </div>
+            <div class="gallery-item fade-in">
+                <img src="https://images.unsplash.com/photo-1470071459604-3b5ec3a7fe05?w=800&q=80" alt="自然">
+                <div class="gallery-overlay">
+                    <h3>光影交织</h3>
+                    <p>创意摄影</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="about" class="about">
+        <div class="about-content">
+            <div class="about-grid">
+                <div class="about-text fade-in">
+                    <h2>关于我</h2>
+                    <p>我是一名充满热情的摄影师，专注于捕捉大自然的壮美瞬间和生活中的诗意时刻。</p>
+                    <p>通过镜头，我希望能够分享这个世界的独特之美，让每一张照片都讲述一个动人的故事，唤起观者内心深处的共鸣。</p>
+                    <p>摄影不仅是我的职业，更是我探索世界、表达情感的方式。</p>
+                </div>
+                <div class="about-stats fade-in">
+                    <div class="stat-item">
+                        <div class="stat-number">500+</div>
+                        <div class="stat-label">作品数量</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-number">8+</div>
+                        <div class="stat-label">从业年限</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-number">50+</div>
+                        <div class="stat-label">获奖荣誉</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-number">100+</div>
+                        <div class="stat-label">合作客户</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <footer id="contact">
+        <div class="footer-content">
+            <div class="social-links">
+                <a href="#" title="微信">📱</a>
+                <a href="#" title="微博">🐦</a>
+                <a href="#" title="Instagram">📷</a>
+                <a href="#" title="邮箱">✉️</a>
+            </div>
+            <p>&copy; 2024 MY PHOTOGRAPHY PORTFOLIO. ALL RIGHTS RESERVED.</p>
+        </div>
+    </footer>
+
+    <script>
+        // 导航栏滚动效果
+        const header = document.getElementById('header');
+        window.addEventListener('scroll', () => {
+            if (window.scrollY > 100) {
+                header.classList.add('scrolled');
+            } else {
+                header.classList.remove('scrolled');
+            }
+        });
+
+        // 滚动动画
+        const observerOptions = {
+            threshold: 0.1,
+            rootMargin: '0px 0px -100px 0px'
+        };
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('visible');
+                }
+            });
+        }, observerOptions);
+
+        document.querySelectorAll('.fade-in').forEach(el => {
+            observer.observe(el);
+        });
+
+        // 平滑滚动
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'start'
+                    });
+                }
+            });
+        });
+    </script>
+</body>
+</html>
